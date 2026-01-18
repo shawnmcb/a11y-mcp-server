@@ -1,0 +1,289 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "lastUpdated": "2026-01-16",
+    "description": "Common accessibility remediation patterns with code examples"
+  },
+  "patterns": [
+    {
+      "id": "missing-alt-informative",
+      "name": "Missing Alt Text (Informative Image)",
+      "category": "images",
+      "issueType": "missing-alt",
+      "wcagRefs": ["1.1.1"],
+      "description": "Images that convey information need descriptive alt text that provides the same information.",
+      "codeBefore": "<img src=\"chart-sales-2024.png\">",
+      "codeAfter": "<img src=\"chart-sales-2024.png\" alt=\"Bar chart showing 2024 sales: Q1 $2M, Q2 $2.5M, Q3 $3M, Q4 $3.5M\">",
+      "notes": "Alt text should describe the information the image conveys, not just what it looks like. For complex images like charts, consider also providing a data table."
+    },
+    {
+      "id": "missing-alt-decorative",
+      "name": "Missing Alt Text (Decorative Image)",
+      "category": "images",
+      "issueType": "missing-alt",
+      "wcagRefs": ["1.1.1"],
+      "description": "Decorative images that don't convey information should have empty alt or be hidden from assistive technology.",
+      "codeBefore": "<img src=\"decorative-divider.png\">",
+      "codeAfter": "<img src=\"decorative-divider.png\" alt=\"\">",
+      "alternativeCode": "<img src=\"decorative-divider.png\" role=\"presentation\">",
+      "notes": "Use empty alt=\"\" (not missing alt) or role=\"presentation\". Consider using CSS background-image instead for purely decorative images."
+    },
+    {
+      "id": "complex-image-description",
+      "name": "Complex Image Needs Long Description",
+      "category": "images",
+      "issueType": "complex-image",
+      "wcagRefs": ["1.1.1"],
+      "description": "Complex images like infographics, diagrams, or charts need extended descriptions beyond what fits in alt text.",
+      "codeBefore": "<img src=\"org-chart.png\" alt=\"Organization chart\">",
+      "codeAfter": "<figure>\n  <img src=\"org-chart.png\" alt=\"Company organization chart showing reporting structure\">\n  <figcaption>\n    <details>\n      <summary>Full organization chart description</summary>\n      <p>The CEO reports to the Board. Three VPs report to the CEO: VP Engineering, VP Sales, and VP Operations...</p>\n    </details>\n  </figcaption>\n</figure>",
+      "notes": "Options: Use aria-describedby pointing to visible text, a details/summary disclosure, or link to a separate page with full description."
+    },
+    {
+      "id": "svg-accessibility",
+      "name": "SVG Missing Accessible Name",
+      "category": "images",
+      "issueType": "svg-no-name",
+      "wcagRefs": ["1.1.1", "4.1.2"],
+      "description": "Inline SVGs need accessible names using title element and aria-labelledby.",
+      "codeBefore": "<svg viewBox=\"0 0 24 24\">\n  <path d=\"M12 2L2 7l10 5 10-5-10-5z\"/>\n</svg>",
+      "codeAfter": "<svg viewBox=\"0 0 24 24\" role=\"img\" aria-labelledby=\"icon-title\">\n  <title id=\"icon-title\">Graduation cap</title>\n  <path d=\"M12 2L2 7l10 5 10-5-10-5z\"/>\n</svg>",
+      "notes": "For decorative SVGs, use aria-hidden=\"true\". For informative SVGs, use role=\"img\" with title element and aria-labelledby."
+    },
+    {
+      "id": "missing-label",
+      "name": "Form Input Missing Label",
+      "category": "forms",
+      "issueType": "missing-label",
+      "wcagRefs": ["1.3.1", "3.3.2", "4.1.2"],
+      "description": "Form inputs need programmatically associated labels so assistive technology can announce them.",
+      "codeBefore": "Email: <input type=\"email\" name=\"email\">",
+      "codeAfter": "<label for=\"email\">Email:</label>\n<input type=\"email\" id=\"email\" name=\"email\">",
+      "alternativeCode": "<label>Email:\n  <input type=\"email\" name=\"email\">\n</label>",
+      "notes": "Use explicit label with for/id, or implicit label wrapping the input. Never rely on placeholder as the only label."
+    },
+    {
+      "id": "missing-error-identification",
+      "name": "Form Error Not Identified",
+      "category": "forms",
+      "issueType": "error-identification",
+      "wcagRefs": ["3.3.1", "3.3.3"],
+      "description": "Form errors must be identified in text and the error description should suggest corrections.",
+      "codeBefore": "<input type=\"email\" class=\"error\" style=\"border: red\">\n<span style=\"color: red\">Invalid</span>",
+      "codeAfter": "<label for=\"email\">Email:</label>\n<input type=\"email\" id=\"email\" aria-describedby=\"email-error\" aria-invalid=\"true\">\n<span id=\"email-error\" class=\"error\">Please enter a valid email address (example: name@domain.com)</span>",
+      "notes": "Don't rely on color alone. Use aria-invalid=\"true\" and aria-describedby to associate error message. Describe what's wrong and how to fix it."
+    },
+    {
+      "id": "missing-required-indicator",
+      "name": "Required Field Not Indicated",
+      "category": "forms",
+      "issueType": "required-indicator",
+      "wcagRefs": ["3.3.2"],
+      "description": "Required fields must be indicated both visually and programmatically.",
+      "codeBefore": "<label>Name <span class=\"red\">*</span></label>\n<input type=\"text\" name=\"name\">",
+      "codeAfter": "<label for=\"name\">Name <span aria-hidden=\"true\">*</span> <span class=\"visually-hidden\">(required)</span></label>\n<input type=\"text\" id=\"name\" name=\"name\" required aria-required=\"true\">",
+      "notes": "Use the required attribute and/or aria-required=\"true\". Visually indicate required fields and explain the indicator (e.g., \"* indicates required\")."
+    },
+    {
+      "id": "missing-fieldset-legend",
+      "name": "Radio/Checkbox Group Missing Fieldset",
+      "category": "forms",
+      "issueType": "fieldset-legend",
+      "wcagRefs": ["1.3.1", "3.3.2"],
+      "description": "Groups of related checkboxes or radio buttons need fieldset and legend to provide group context.",
+      "codeBefore": "<p>Preferred contact method:</p>\n<input type=\"radio\" name=\"contact\" id=\"email\"> <label for=\"email\">Email</label>\n<input type=\"radio\" name=\"contact\" id=\"phone\"> <label for=\"phone\">Phone</label>",
+      "codeAfter": "<fieldset>\n  <legend>Preferred contact method:</legend>\n  <input type=\"radio\" name=\"contact\" id=\"email\"> <label for=\"email\">Email</label>\n  <input type=\"radio\" name=\"contact\" id=\"phone\"> <label for=\"phone\">Phone</label>\n</fieldset>",
+      "notes": "Screen readers announce the legend with each option, providing context. Also useful for grouping related text inputs."
+    },
+    {
+      "id": "link-purpose-unclear",
+      "name": "Link Purpose Unclear",
+      "category": "interactive",
+      "issueType": "link-purpose",
+      "wcagRefs": ["2.4.4", "2.4.9"],
+      "description": "Link text should clearly describe the destination or purpose without relying on surrounding context.",
+      "codeBefore": "<p>Read our privacy policy <a href=\"/privacy\">here</a>.</p>",
+      "codeAfter": "<p><a href=\"/privacy\">Read our privacy policy</a></p>",
+      "alternativeCode": "<p>Read our <a href=\"/privacy\">privacy policy</a>.</p>",
+      "notes": "Avoid generic link text like 'click here', 'read more', 'learn more'. The link text should make sense out of context."
+    },
+    {
+      "id": "button-no-accessible-name",
+      "name": "Button Has No Accessible Name",
+      "category": "interactive",
+      "issueType": "button-name",
+      "wcagRefs": ["4.1.2", "2.5.3"],
+      "description": "Buttons must have an accessible name, especially icon-only buttons.",
+      "codeBefore": "<button onclick=\"deleteItem()\">\n  <svg><!-- trash icon --></svg>\n</button>",
+      "codeAfter": "<button onclick=\"deleteItem()\" aria-label=\"Delete item\">\n  <svg aria-hidden=\"true\"><!-- trash icon --></svg>\n</button>",
+      "alternativeCode": "<button onclick=\"deleteItem()\">\n  <svg aria-hidden=\"true\"><!-- trash icon --></svg>\n  <span class=\"visually-hidden\">Delete item</span>\n</button>",
+      "notes": "Use aria-label, visually hidden text, or visible text. The accessible name should match or include any visible text (2.5.3 Label in Name)."
+    },
+    {
+      "id": "custom-control-no-role",
+      "name": "Custom Control Missing Role",
+      "category": "interactive",
+      "issueType": "custom-control",
+      "wcagRefs": ["4.1.2"],
+      "description": "Custom interactive elements need appropriate ARIA roles, states, and keyboard support.",
+      "codeBefore": "<div class=\"toggle\" onclick=\"toggleSetting()\">ON</div>",
+      "codeAfter": "<button role=\"switch\" aria-checked=\"true\" onclick=\"toggleSetting()\">\n  Notifications: <span>ON</span>\n</button>",
+      "notes": "Custom controls need: role, accessible name, state (if applicable), and keyboard operability. Prefer native HTML elements when possible."
+    },
+    {
+      "id": "focus-not-visible",
+      "name": "Focus Indicator Not Visible",
+      "category": "interactive",
+      "issueType": "focus-visible",
+      "wcagRefs": ["2.4.7", "2.4.13"],
+      "description": "Interactive elements must have a visible focus indicator for keyboard users.",
+      "codeBefore": "button:focus {\n  outline: none;\n}",
+      "codeAfter": "button:focus {\n  outline: 2px solid #005fcc;\n  outline-offset: 2px;\n}\n\n/* For mouse users who don't need it */\nbutton:focus:not(:focus-visible) {\n  outline: none;\n}\n\nbutton:focus-visible {\n  outline: 2px solid #005fcc;\n  outline-offset: 2px;\n}",
+      "notes": "WCAG 2.4.13 requires focus indicator of at least 2px perimeter with 3:1 contrast against unfocused state. Use :focus-visible to show focus only for keyboard users."
+    },
+    {
+      "id": "missing-heading-structure",
+      "name": "Missing or Improper Heading Structure",
+      "category": "structure",
+      "issueType": "heading-structure",
+      "wcagRefs": ["1.3.1", "2.4.6", "2.4.10"],
+      "description": "Pages should have a logical heading hierarchy starting with h1, without skipping levels.",
+      "codeBefore": "<div class=\"title\">Products</div>\n<div class=\"section-title\">Electronics</div>\n<div class=\"product-name\">Laptop</div>",
+      "codeAfter": "<h1>Products</h1>\n<h2>Electronics</h2>\n<h3>Laptop</h3>",
+      "notes": "Use one h1 per page. Don't skip levels (h1 to h3). Headings should describe section content. Don't use headings just for visual styling."
+    },
+    {
+      "id": "missing-landmarks",
+      "name": "Missing Landmark Regions",
+      "category": "structure",
+      "issueType": "landmarks",
+      "wcagRefs": ["1.3.1", "2.4.1"],
+      "description": "Use HTML5 landmark elements to define page regions for assistive technology navigation.",
+      "codeBefore": "<div id=\"header\">...</div>\n<div id=\"nav\">...</div>\n<div id=\"content\">...</div>\n<div id=\"footer\">...</div>",
+      "codeAfter": "<header>...</header>\n<nav aria-label=\"Main\">...</nav>\n<main>...</main>\n<footer>...</footer>",
+      "notes": "Use semantic elements: header, nav, main, aside, footer. Only one main per page. Label multiple navs with aria-label."
+    },
+    {
+      "id": "missing-skip-link",
+      "name": "Missing Skip Navigation Link",
+      "category": "structure",
+      "issueType": "skip-link",
+      "wcagRefs": ["2.4.1"],
+      "description": "Provide a skip link to bypass repeated navigation blocks.",
+      "codeBefore": "<body>\n  <nav><!-- long navigation --></nav>\n  <main id=\"main\">...</main>\n</body>",
+      "codeAfter": "<body>\n  <a href=\"#main\" class=\"skip-link\">Skip to main content</a>\n  <nav><!-- long navigation --></nav>\n  <main id=\"main\" tabindex=\"-1\">...</main>\n</body>\n\n/* CSS */\n.skip-link {\n  position: absolute;\n  left: -9999px;\n}\n.skip-link:focus {\n  position: static;\n  left: auto;\n}",
+      "notes": "Skip link should be the first focusable element. Make it visible on focus. Target should have tabindex=\"-1\" to receive focus in all browsers."
+    },
+    {
+      "id": "missing-page-title",
+      "name": "Missing or Non-Descriptive Page Title",
+      "category": "structure",
+      "issueType": "page-title",
+      "wcagRefs": ["2.4.2"],
+      "description": "Every page needs a unique, descriptive title that identifies its purpose.",
+      "codeBefore": "<title>My Website</title>",
+      "codeAfter": "<title>Contact Us - My Website</title>",
+      "notes": "Format: 'Page Name - Site Name'. Title should be unique within the site and describe the page's specific content or purpose."
+    },
+    {
+      "id": "aria-hidden-focusable",
+      "name": "Focusable Element Inside aria-hidden",
+      "category": "aria",
+      "issueType": "aria-hidden-focus",
+      "wcagRefs": ["4.1.2", "1.3.1"],
+      "description": "Elements with aria-hidden=\"true\" should not contain focusable elements.",
+      "codeBefore": "<div aria-hidden=\"true\">\n  <button>Click me</button>\n</div>",
+      "codeAfter": "<div aria-hidden=\"true\">\n  <button tabindex=\"-1\" disabled>Click me</button>\n</div>",
+      "alternativeCode": "<!-- Or remove aria-hidden if interaction is needed -->\n<div>\n  <button>Click me</button>\n</div>",
+      "notes": "aria-hidden=\"true\" hides content from AT but doesn't prevent keyboard focus. Either remove aria-hidden or make children unfocusable."
+    },
+    {
+      "id": "missing-live-region",
+      "name": "Dynamic Content Not Announced",
+      "category": "aria",
+      "issueType": "live-region",
+      "wcagRefs": ["4.1.3"],
+      "description": "Dynamic content updates need ARIA live regions to announce changes to screen reader users.",
+      "codeBefore": "<div id=\"status\"></div>\n<script>\n  document.getElementById('status').textContent = 'Item added to cart';\n</script>",
+      "codeAfter": "<div id=\"status\" role=\"status\" aria-live=\"polite\"></div>\n<script>\n  document.getElementById('status').textContent = 'Item added to cart';\n</script>",
+      "notes": "Use role=\"status\" or aria-live=\"polite\" for non-urgent updates. Use role=\"alert\" or aria-live=\"assertive\" for urgent/error messages."
+    },
+    {
+      "id": "modal-focus-trap",
+      "name": "Modal Dialog Focus Management",
+      "category": "aria",
+      "issueType": "modal-focus",
+      "wcagRefs": ["2.1.2", "2.4.3"],
+      "description": "Modal dialogs must trap focus within the dialog and return focus when closed.",
+      "codeBefore": "<div class=\"modal\" style=\"display: block\">\n  <h2>Confirm</h2>\n  <button>Cancel</button>\n  <button>OK</button>\n</div>",
+      "codeAfter": "<div class=\"modal\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"modal-title\">\n  <h2 id=\"modal-title\">Confirm</h2>\n  <button>Cancel</button>\n  <button>OK</button>\n</div>\n\n/* JavaScript needed to:\n1. Move focus to dialog (or first focusable) on open\n2. Trap Tab/Shift+Tab within dialog\n3. Close on Escape key\n4. Return focus to trigger element on close */",
+      "notes": "Use the native <dialog> element when possible. Otherwise implement focus trapping, Escape to close, and focus restoration."
+    },
+    {
+      "id": "tab-panel-structure",
+      "name": "Tabs Missing ARIA Structure",
+      "category": "aria",
+      "issueType": "tabs-aria",
+      "wcagRefs": ["4.1.2", "1.3.1"],
+      "description": "Tab interfaces need proper ARIA roles and keyboard navigation.",
+      "codeBefore": "<div class=\"tabs\">\n  <div class=\"tab active\">Tab 1</div>\n  <div class=\"tab\">Tab 2</div>\n</div>\n<div class=\"panel\">Content 1</div>\n<div class=\"panel hidden\">Content 2</div>",
+      "codeAfter": "<div role=\"tablist\" aria-label=\"Product information\">\n  <button role=\"tab\" id=\"tab1\" aria-selected=\"true\" aria-controls=\"panel1\">Tab 1</button>\n  <button role=\"tab\" id=\"tab2\" aria-selected=\"false\" aria-controls=\"panel2\" tabindex=\"-1\">Tab 2</button>\n</div>\n<div role=\"tabpanel\" id=\"panel1\" aria-labelledby=\"tab1\">Content 1</div>\n<div role=\"tabpanel\" id=\"panel2\" aria-labelledby=\"tab2\" hidden>Content 2</div>",
+      "notes": "Keyboard: Arrow keys move between tabs, Tab moves to panel. Only selected tab is in tab order (others have tabindex=\"-1\")."
+    },
+    {
+      "id": "insufficient-contrast",
+      "name": "Insufficient Color Contrast",
+      "category": "visual",
+      "issueType": "contrast",
+      "wcagRefs": ["1.4.3", "1.4.6"],
+      "description": "Text must have sufficient contrast against its background: 4.5:1 for normal text, 3:1 for large text (AA).",
+      "codeBefore": "/* Light gray on white - ratio ~2:1 */\n.text {\n  color: #999999;\n  background: #ffffff;\n}",
+      "codeAfter": "/* Dark gray on white - ratio ~7:1 */\n.text {\n  color: #595959;\n  background: #ffffff;\n}",
+      "notes": "Large text is 18pt (24px) or 14pt (18.5px) bold. Use a contrast checker tool. Consider enhanced contrast (7:1/4.5:1) for AAA."
+    },
+    {
+      "id": "color-only-meaning",
+      "name": "Color Used as Only Indicator",
+      "category": "visual",
+      "issueType": "color-meaning",
+      "wcagRefs": ["1.4.1"],
+      "description": "Information conveyed by color must also be available through other means like text, icons, or patterns.",
+      "codeBefore": "<span style=\"color: red\">Error in form</span>\n<span style=\"color: green\">Success</span>",
+      "codeAfter": "<span style=\"color: #d32f2f\">\n  <svg aria-hidden=\"true\"><!-- error icon --></svg>\n  Error: Please correct the highlighted fields\n</span>\n<span style=\"color: #388e3c\">\n  <svg aria-hidden=\"true\"><!-- checkmark icon --></svg>\n  Success: Your form has been submitted\n</span>",
+      "notes": "Use icons, text labels, patterns, or underlines in addition to color. Ensure links are distinguishable from surrounding text without color."
+    },
+    {
+      "id": "autocomplete-missing",
+      "name": "Input Missing Autocomplete Attribute",
+      "category": "forms",
+      "issueType": "autocomplete",
+      "wcagRefs": ["1.3.5"],
+      "description": "Personal data input fields should have appropriate autocomplete attributes to help users fill forms.",
+      "codeBefore": "<input type=\"text\" name=\"name\">\n<input type=\"email\" name=\"email\">\n<input type=\"tel\" name=\"phone\">",
+      "codeAfter": "<input type=\"text\" name=\"name\" autocomplete=\"name\">\n<input type=\"email\" name=\"email\" autocomplete=\"email\">\n<input type=\"tel\" name=\"phone\" autocomplete=\"tel\">",
+      "notes": "Common values: name, email, tel, street-address, postal-code, cc-number, current-password, new-password. Helps users with cognitive disabilities and motor impairments."
+    },
+    {
+      "id": "table-missing-headers",
+      "name": "Data Table Missing Headers",
+      "category": "structure",
+      "issueType": "table-headers",
+      "wcagRefs": ["1.3.1"],
+      "description": "Data tables need proper header cells (th) with scope attributes to associate headers with data cells.",
+      "codeBefore": "<table>\n  <tr>\n    <td>Name</td>\n    <td>Email</td>\n    <td>Role</td>\n  </tr>\n  <tr>\n    <td>John</td>\n    <td>john@example.com</td>\n    <td>Admin</td>\n  </tr>\n</table>",
+      "codeAfter": "<table>\n  <caption>Team members</caption>\n  <thead>\n    <tr>\n      <th scope=\"col\">Name</th>\n      <th scope=\"col\">Email</th>\n      <th scope=\"col\">Role</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>John</td>\n      <td>john@example.com</td>\n      <td>Admin</td>\n    </tr>\n  </tbody>\n</table>",
+      "notes": "Use th with scope=\"col\" or scope=\"row\". Add caption for table purpose. Use thead, tbody for structure. Complex tables may need headers/id attributes."
+    },
+    {
+      "id": "lang-missing",
+      "name": "Page Language Not Specified",
+      "category": "structure",
+      "issueType": "page-lang",
+      "wcagRefs": ["3.1.1", "3.1.2"],
+      "description": "The page language must be specified so assistive technology can use correct pronunciation.",
+      "codeBefore": "<html>\n  <head>...",
+      "codeAfter": "<html lang=\"en\">\n  <head>...",
+      "notes": "Use lang attribute on html element. For content in different languages, add lang to that element: <span lang=\"fr\">Bonjour</span>."
+    }
+  ]
+}
