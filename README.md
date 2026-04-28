@@ -1,6 +1,6 @@
 # a11y-mcp-server
 
-MCP server for accessibility auditing, WCAG criteria lookup, and remediation guidance.
+MCP server for accessibility auditing, WCAG criteria lookup, and remediation guidance. Already obsolete.
 
 ## Features
 
@@ -29,7 +29,7 @@ npm start
 
 ## NFSN Deployment
 
-### Prerequisites
+### Prerequisites for my own path; YMMV:
 
 1. NFSN account with funds (~$10 initial deposit)
 2. SSH access configured
