@@ -1,6 +1,6 @@
 # a11y-mcp-server
 
-MCP server for accessibility auditing, WCAG criteria lookup, and remediation guidance. Already obsolete.
+MCP server for accessibility auditing, WCAG criteria lookup, and remediation guidance. Kept public as working evidence of standing up an MCP server end to end: five working tools plus a deployment runbook. The skills-based successor for day-to-day accessibility work is [claude-a11y-skills](https://github.com/shawnmcb/claude-a11y-skills).
 
 ## Features
 
